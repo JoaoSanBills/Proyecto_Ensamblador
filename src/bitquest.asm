@@ -1,6 +1,6 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido
+global contar_caracteres, movimiento_valido, calcular_puntaje
 section .text
 contar_caracteres:
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
@@ -50,6 +50,37 @@ movimiento_valido:
     jmp .fin
 
     .block:
+        mov eax, 0
+    .fin:
+        ret
+
+calcular_puntaje:
+    ;ECX = Monedas recolectadas
+    ;EDX = Monedas totales
+    ;R8D = Pasos realizados
+    ;R9D = Niveles completados (32 bits = D)
+    ;Puntaje (EAX) = (recolectadas*100/totales) + (niveles*300) - (pasos*25)
+    xor eax, eax
+    xor r10d, r10d
+
+    mov r10d, edx
+    mov eax, ecx
+    imul eax, 100
+
+    cdq          ;va a tomar lo de eax y extender su signo edx, extender el signo solamente es dejar la parte de edx con 1(-) o 0(+)
+    idiv r10d    ;resultado en eax, residuo en edx
+    
+    imul r9d, 300
+    add eax, r9d
+
+    imul r8d, 50
+    sub eax, r8d
+
+    cmp eax, 0
+    jle .negativo
+    jmp .fin
+
+    .negativo:
         mov eax, 0
     .fin:
         ret
