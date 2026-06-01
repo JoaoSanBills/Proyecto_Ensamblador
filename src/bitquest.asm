@@ -1,11 +1,11 @@
 bits 64
 default rel
-global contar_caracteres, 
-section.text
-;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
-;EDX = Numero total de celdas
-;R8B = caracter a buscar (1 byte = char, por eso es B)
+global contar_caracteres, movimiento_valido
+section .text
 contar_caracteres:
+    ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
+    ;EDX = Numero total de celdas
+    ;R8B = caracter a buscar (1 byte = char, por eso es B)
     xor eax, eax    ;eax es el acumulador
     xor r9, r9      ;r9 sera el indice contador del bucle
     
@@ -16,12 +16,40 @@ contar_caracteres:
         mov r9b, [rcx]  ;tenemos el byte actual del mapa y lo guardamos en r9b
 
         cmp r9b, r8b    ;comparamos los caracteres
-        jne .siguiente: ;Si NO son iguales, no incrementamos y saltamos
+        jne .siguiente ;Si NO son iguales, no incrementamos y saltamos
 
         inc eax     ;sumamos 1
     .siguiente:
         inc rcx     ;es como incrementar el i, avanzamos una posicion
         dec edx     ;comienza en 3600, pero ya checamos 1, entonces restamos
-        jnz .ciclo  ;revismaos, si edx NO es 0 continuamos el ciclo
+        jnz .bucle  ;revismaos, si edx NO es 0 continuamos el ciclo
+    .fin:
+        ret
+
+movimiento_valido:
+    ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
+    ;EDX = Numero total de columnas
+    ;R8D = Nueva fila propuesta para el jugador (donde quiere moverse, 32 bits = D)
+    ;R9D = Nueva columna propuesta para el jugador (donde quiere moverse, 32 bits = D)
+
+    xor eax, eax
+    xor r10d, r10d
+
+    ;Realizamos -> INDICE PLANO = (Nfila x TotColumnas) + Ncolumna
+    ;Esto pq estamos en la memoria RAM, arreglo unidimensional
+    imul r8d, edx
+    add r8d, r9d
+    mov r10d, r8d
+    ;Nos posicionamos en la posicion exacta en la que debemos estar
+    mov al, [rcx + r10]
+
+    cmp al, '#'
+    je .block
+
+    mov eax, 1
+    jmp .fin
+
+    .block:
+        mov eax, 0
     .fin:
         ret
