@@ -40,6 +40,7 @@ movimiento_valido:
     imul r8d, edx
     add r8d, r9d
     mov r10d, r8d
+    movsxd r10, r10d
     ;Nos posicionamos en la posicion exacta en la que debemos estar
     mov al, [rcx + r10]
 
@@ -47,11 +48,11 @@ movimiento_valido:
     je .block
 
     mov eax, 1
-    jmp .fin
+    jmp .fin2
 
     .block:
         mov eax, 0
-    .fin:
+    .fin2:
         ret
 
 calcular_puntaje:
@@ -78,11 +79,11 @@ calcular_puntaje:
 
     cmp eax, 0
     jle .negativo
-    jmp .fin
+    jmp .fin3
 
     .negativo:
         mov eax, 0
-    .fin:
+    .fin3:
         ret
 
 detectar_objeto:
@@ -108,6 +109,4 @@ detectar_objeto:
     ret
     .detectado:
         mov eax, 1
-        jmp .fin
-    .fin:
         ret
