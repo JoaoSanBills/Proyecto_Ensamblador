@@ -1,6 +1,6 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido, calcular_puntaje
+global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto
 section .text
 contar_caracteres:
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
@@ -59,7 +59,7 @@ calcular_puntaje:
     ;EDX = Monedas totales
     ;R8D = Pasos realizados
     ;R9D = Niveles completados (32 bits = D)
-    ;Puntaje (EAX) = (recolectadas*100/totales) + (niveles*300) - (pasos*25)
+    ;Puntaje (EAX) = (recolectadas*100/totales) + (niveles*300) - (pasos*5)
     xor eax, eax
     xor r10d, r10d
 
@@ -73,7 +73,7 @@ calcular_puntaje:
     imul r9d, 300
     add eax, r9d
 
-    imul r8d, 50
+    imul r8d, 5
     sub eax, r8d
 
     cmp eax, 0
@@ -82,5 +82,32 @@ calcular_puntaje:
 
     .negativo:
         mov eax, 0
+    .fin:
+        ret
+
+detectar_objeto:
+    ;RCX = Direccion inicial del mapa
+    ;EDX = Tot de columnas
+    ;R8D = Fila a revisar
+    ;R9D = Columna a revisar (32 bits = D)
+    ;[rsp + 40] = Caracter a buscar (1 byte = B), llega por la Pila
+    xor eax, eax
+
+    mov r10b, [rsp + 40]
+
+    ;Realizamos -> INDICE PLANO = (Nfila x TotColumnas) + Ncolumna
+    imul r8d, edx
+    add r8d, r9d
+
+    movsxd r8, r8d  ;Extendemos el indice de 32 (r8d) a 64 (r8)
+    mov al, [rcx + r8]
+    cmp al, r10b
+    je .detectado
+
+    mov eax, 0
+    ret
+    .detectado:
+        mov eax, 1
+        jmp .fin
     .fin:
         ret
