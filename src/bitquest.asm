@@ -1,8 +1,8 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto
+global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, celdas_libres:
 section .text
-contar_caracteres:
+contar_caracteres:      ;USAR PARA CONTAR MONEDAS !!!!!!NO PONER EL CONTADOR DIRECTAMENTE!!!!!!!
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
     ;EDX = Numero total de celdas
     ;R8B = caracter a buscar (1 byte = char, por eso es B)
@@ -109,4 +109,26 @@ detectar_objeto:
     ret
     .detectado:
         mov eax, 1
+        ret
+
+celdas_libres:
+    ;RCX = Direccion inicial del mapa
+    ;EDX = Tot de celdas
+    xor eax, eax
+    xor r8, r8    ;indice contador del bucle
+
+    cmp edx, 0
+    je .fin4
+
+    .loop:
+        mov r8b, [rcx]
+        cmp r8b, '.'
+        jne .siguiente
+
+        inc eax
+        .siguiente:
+            inc rcx
+            dec edx
+            jnz .loop
+    .fin4:
         ret
