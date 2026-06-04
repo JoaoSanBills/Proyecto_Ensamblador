@@ -1,27 +1,47 @@
+; =========================================================
+; bitquest.asm - Rutinas en NASM de 64 bits para BitQuest
+; Convencion de llamadas Windows x64:
+;   RCX = primer argumento
+;   RDX = segundo argumento
+;   R8  = tercer argumento
+;   RAX = valor de retorno
+; =========================================================
+
 bits 64
 default rel
-global contar_caracteres, 
-section.text
-;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
-;EDX = Numero total de celdas
-;R8B = caracter a buscar (1 byte = char, por eso es B)
+
+global contar_caracteres
+
+section .text
+
+; ---------------------------------------------------------
+; contar_caracteres
+; Cuenta cuantas veces aparece un caracter en el mapa.
+; Parametros:
+;   RCX = direccion base del mapa (puntero char*)
+;   EDX = numero total de celdas (filas * columnas)
+;   R8B = caracter a buscar (1 byte)
+; Retorna:
+;   EAX = cantidad de veces que aparece el caracter
+; ---------------------------------------------------------
 contar_caracteres:
-    xor eax, eax    ;eax es el acumulador
-    xor r9, r9      ;r9 sera el indice contador del bucle
-    
+    xor eax, eax        ; eax = contador de coincidencias (retorno)
+    xor r9d, r9d        ; r9d = indice auxiliar
+
     cmp edx, 0
-    je .fin
+    je  .fin            ; si no hay celdas, retornar 0
 
-    .bucle:
-        mov r9b, [rcx]  ;tenemos el byte actual del mapa y lo guardamos en r9b
+.bucle:
+    mov r9b, [rcx]      ; cargamos el byte actual del mapa
+    cmp r9b, r8b        ; comparamos con el caracter buscado
+    jne .siguiente      ; si no coincide, pasamos al siguiente
 
-        cmp r9b, r8b    ;comparamos los caracteres
-        jne .siguiente: ;Si NO son iguales, no incrementamos y saltamos
+    inc eax             ; coincidencia: sumamos 1 al contador
 
-        inc eax     ;sumamos 1
-    .siguiente:
-        inc rcx     ;es como incrementar el i, avanzamos una posicion
-        dec edx     ;comienza en 3600, pero ya checamos 1, entonces restamos
-        jnz .ciclo  ;revismaos, si edx NO es 0 continuamos el ciclo
-    .fin:
-        ret
+.siguiente:
+    inc rcx             ; avanzamos al siguiente byte del mapa
+    dec edx             ; reducimos el contador de celdas restantes
+    jnz .bucle          ; si quedan celdas, repetimos
+
+.fin:
+    ret
