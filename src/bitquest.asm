@@ -1,6 +1,6 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, celdas_libres:
+global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, celdas_libres
 section .text
 contar_caracteres:      ;USAR PARA CONTAR MONEDAS !!!!!!NO PONER EL CONTADOR DIRECTAMENTE!!!!!!!
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
@@ -69,7 +69,8 @@ calcular_puntaje:
     imul eax, 100
 
     cdq          ;va a tomar lo de eax y extender su signo edx, extender el signo solamente es dejar la parte de edx con 1(-) o 0(+)
-    idiv r10d    ;resultado en eax, residuo en edx
+    mov ecx, r10d
+    idiv ecx    ;resultado en eax, residuo en edx
     
     imul r9d, 300
     add eax, r9d
