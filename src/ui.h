@@ -22,6 +22,22 @@
 #define MENU_INSTRUCCIONES 2
 #define MENU_SALIR         3
 
+/* =========================================================
+ * Declaraciones de funciones NASM
+ * Las primeras 2 vienen de Leo (Rol 2), las 3 restantes
+ * vienen de nuestro bitquest.asm (Rol 4).
+ * Se declaran aqui para que main.c tenga un solo include.
+ * ========================================================= */
+
+/* De Leo - bitquest.asm (leo-desarrollo) */
+extern int       contar_caracteres   (char* mapa, int total_celdas, char caracter);
+extern int       movimiento_valido   (char* mapa, int columnas, int nueva_fila, int nueva_columna);
+
+/* De Joshua - bitquest.asm (joshua-desarrollo) */
+extern long long calcular_puntaje    (long long monedas, long long pasos, long long niveles);
+extern int       detectar_objeto     (char* mapa, int columnas, int fila, int columna, char objeto);
+extern int       contar_celdas_libres(char* mapa, int total_celdas);
+
 /*
  * habilitar_colores_consola
  * Activa el modo VT100 en la terminal de Windows para que
