@@ -1,6 +1,6 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, celdas_libres
+global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, contar_celdas_libres
 section .text
 contar_caracteres:      ;USAR PARA CONTAR MONEDAS !!!!!!NO PONER EL CONTADOR DIRECTAMENTE!!!!!!!
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
@@ -112,7 +112,7 @@ detectar_objeto:
         mov eax, 1
         ret
 
-celdas_libres:
+contar_celdas_libres:
     ;RCX = Direccion inicial del mapa
     ;EDX = Tot de celdas
     xor eax, eax
