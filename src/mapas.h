@@ -113,7 +113,7 @@ extern int detectar_objeto(const char *mapa, int cols, int fila, int col, char o
  *   RDX = int total
  *   Retorna en EAX: cantidad de celdas libres '.'
  */
-extern int celdas_libres(const char *mapa, int total);
+extern int contar_celdas_libres(const char *mapa, int total);
 
 /* Funcion 3: calcular_puntaje
  *   ECX = int monedas

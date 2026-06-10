@@ -1,6 +1,6 @@
 bits 64
 default rel
-global contar_caracteres, movimiento_valido, calcular_puntaje, detectar_objeto, contar_celdas_libres
+global contar_caracteres, validar_movimiento, calcular_puntaje, detectar_objeto, contar_celdas_libres
 section .text
 contar_caracteres:      ;USAR PARA CONTAR MONEDAS !!!!!!NO PONER EL CONTADOR DIRECTAMENTE!!!!!!!
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
@@ -26,7 +26,7 @@ contar_caracteres:      ;USAR PARA CONTAR MONEDAS !!!!!!NO PONER EL CONTADOR DIR
     .fin:
         ret
 
-movimiento_valido:
+validar_movimiento:
     ;RCX = Direccion base del mapa (puntero de 64 bits), es como el i del bucle
     ;EDX = Numero total de columnas
     ;R8D = Nueva fila propuesta para el jugador (donde quiere moverse, 32 bits = D)
