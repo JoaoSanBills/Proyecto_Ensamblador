@@ -29,14 +29,8 @@
  * Se declaran aqui para que main.c tenga un solo include.
  * ========================================================= */
 
-/* De Leo - bitquest.asm (leo-desarrollo) */
-extern int       contar_caracteres   (char* mapa, int total_celdas, char caracter);
-extern int       movimiento_valido   (char* mapa, int columnas, int nueva_fila, int nueva_columna);
-
-/* De Joshua - bitquest.asm (joshua-desarrollo) */
-extern long long calcular_puntaje    (long long monedas, long long pasos, long long niveles);
-extern int       detectar_objeto     (char* mapa, int columnas, int fila, int columna, char objeto);
-extern int       contar_celdas_libres(char* mapa, int total_celdas);
+/* Las funciones NASM ahora se importan a traves de mapas.h */
+#include "mapas.h"
 
 /*
  * habilitar_colores_consola

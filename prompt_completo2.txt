@@ -1,0 +1,83 @@
+<USER_REQUEST>
+Ahora, NO subas esto que te voy a pasar pero ocupo que lo que acabamos de hacer se acople a los requerimientos de este contexto: Proyecto Final
+BitQuest: Explorador de matrices con C y NASM
+Lenguaje Ensamblador
+Código híbrido C + NASM de 64 bits
+Fecha de entrega: 15 de junio del 2026
+Descripción general del proyecto
+El proyecto final consiste en desarrollar un videojuego en consola utilizando programación
+híbrida con C y NASM de 64 bits. El juego llevará por nombre:
+
+BitQuest: Explorador de matrices con C y NASM
+El videojuego deberá representar un laberinto mediante una matriz grande. El jugador se
+moverá dentro del mapa, recolectará monedas, buscará una llave, abrirá una puerta y llegará
+a una salida para avanzar de nivel.
+
+A diferencia de un juego donde se muestra todo el mapa en pantalla, en este proyecto el
+mapa completo será más grande que la zona visible. Por ejemplo, cada nivel podrá tener una
+matriz de 60 x 60, pero en la pantalla solo se mostrará una ventana de 20 x 20. Cuando el
+jugador se mueva, la vista deberá desplazarse para mostrar la zona cercana al jugador.
+
+El objetivo principal es reforzar el uso de matrices, funciones, paso de parámetros, compilación
+híbrida, manejo de memoria, ciclos, condiciones y llamadas a rutinas escritas en ensamblador
+desde un programa en C.
+
+Objetivo del proyecto
+Desarrollar un videojuego en consola que integra código en C con rutinas escritas en NASM
+de 64 bits. El programa deberá demostrar que el estudiante comprende cómo representar
+información mediante matrices, cómo recorrer la memoria, cómo validar movimientos dentro de
+un mapa y cómo llamar funciones en ensamblador desde un programa escrito en C.
+
+Al finalizar el proyecto, el estudiante deberá ser capaz de:
+
+Representar un mapa mediante una matriz de caracteres.
+Mostrar únicamente una parte visible de una matriz más grande.
+Controlar el movimiento de un jugador dentro de un laberinto.
+Validar paredes, puertas, llaves, monedas y salida
+<truncated 20064 bytes>
+s, enlace a GitHub, explicación,
+README, build.bat e historial de commits.
+5
+Total 100
+Penalizaciones
+Se podrán aplicar penalizaciones en los casos siguientes:
+
+Situación Penalización
+No se incluye enlace al repositorio de GitHub dentro del PDF. Hasta 15 puntos
+El repositorio no contiene el código fuente completo. Hasta 20 puntos
+El repositorio no contiene archivo build.bat o README. Hasta 10 puntos
+El repositorio tiene un solo commit o no muestra avance real. Hasta 15 puntos
+El proyecto no compila. Hasta 40 puntos
+El proyecto no ejecuta correctamente. Hasta 30 puntos
+No se usa NASM. Hasta 30 puntos
+Solo se usa NASM de forma decorativa y no funcional. Hasta 20 puntos
+Falta una o más funciones obligatorias en NASM. Hasta 25 puntos
+El total de monedas está escrito manualmente. Hasta 15 puntos
+No hay tres niveles. Hasta 10 puntos
+No se implementa la ventana visible de 20 x 20. Hasta 15 puntos
+Código desordenado o sin comentarios. Hasta 10 puntos
+No se entrega reporte. Hasta 10 puntos
+No se incluyen capturas de ejecución. Hasta 5 puntos
+Restricciones
+El proyecto deberá respetar las siguientes restricciones:
+
+No se permite entregar únicamente capturas o reporte sin enlace al repositorio.
+No se permite entregar un repositorio con un solo commit realizado al final.
+No se permite omitir el archivo build.bat O el README como sustituto del reporte.
+No se permite entregar un proyecto hecho únicamente en C.
+No se permite entregar un proyecto hecho únicamente en NASM.
+No se permite definir manualmente el total de monedas de cada nivel.
+
+No se permite usar una matriz menor a la solicitada.
+
+No se permite mostrar todo el mapa completo si no se implementa la ventana visible.
+
+No se permite omitir funciones obligatorias de NASM.
+
+No se permite entregar código que no se compile.
+
+No se permite entregar un proyecto descargado de internet sin modificaciones propias.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-02T08:53:56-06:00.
+</ADDITIONAL_METADATA>
