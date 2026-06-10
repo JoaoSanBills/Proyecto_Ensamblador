@@ -1,49 +1,15 @@
-/* =========================================================
- * main.c - Punto de entrada de BitQuest
- * Rol 4: Integra el menu de UI con el motor de juego de Leo/Joao
- *
- * Flujo:
- *   1. Habilitar colores ANSI en consola
- *   2. Mostrar menu principal
- *   3. Jugar (bucle_principal de Leo/Joao)
- *   4. Mostrar resumen del nivel (con datos del struct Jugador)
- *   5. Mostrar resumen final con puntaje calculado en NASM
- * ========================================================= */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <conio.h>
 
-#include "juego.h"  /* Struct Jugador + inicializar_juego + bucle_principal */
+#include "juego.h"  /* bucle_principal + EstadoJuego */
 #include "ui.h"     /* Menus, HUD, pantallas de resultado + extern NASM */
-
-/* ---------------------------------------------------------
- * mapa_prueba esta definido en juego.c (Leo).
- * Cuando Rodrigo integre los mapas reales de 60x60 esto
- * se reemplazara por los mapas oficiales.
- * --------------------------------------------------------- */
-extern char mapa_prueba[];
-
-/* Tamanio del mapa de prueba actual (5x5 = 25 celdas) */
-#define MAPA_CELDAS_PRUEBA 25
+#include "mapas.h"  /* mapas_cargar_nivel */
 
 int main(void) {
     /* Activar colores ANSI en la terminal de Windows */
     habilitar_colores_consola();
-
-    /* Contadores globales para el resumen final */
-    int monedas_acumuladas   = 0;
-    int total_monedas_global = 0;
-    int pasos_acumulados     = 0;
-    int niveles_completados  = 0;
-
-    /*
-     * Calculamos las celdas libres al inicio con la funcion NASM
-     * (Funcion obligatoria 5: contar_celdas_libres).
-     * Se muestra antes de que el jugador empiece.
-     */
-    int celdas_libres = contar_celdas_libres(mapa_prueba, MAPA_CELDAS_PRUEBA);
 
     /* ---- Bucle del menu principal ---- */
     int opcion;
@@ -64,73 +30,61 @@ int main(void) {
         }
 
         /* ---- Opcion: Jugar ---- */
+        EstadoJuego estado;
+        inicializar_juego(&estado);
 
-        /*
-         * Contamos las monedas del nivel usando la funcion NASM
-         * (Funcion obligatoria 1: contar_caracteres).
-         * Esto cumple el requisito de NO hardcodear el total de monedas.
-         */
-        int total_monedas_nivel = contar_caracteres(mapa_prueba,
-                                                    MAPA_CELDAS_PRUEBA, 'M');
+        int jugando_campana = 1;
+        while (jugando_campana && estado.niveles_completados < 3) {
+            mapa_cargar_nivel(&estado, estado.niveles_completados);
 
-        limpiar_pantalla();
-        printf(COLOR_AMARILLO COLOR_BOLD "  Preparando nivel...\n" COLOR_RESET);
-        printf("\n");
-        printf("  " COLOR_CIAN "Celdas libres en el mapa: " COLOR_BOLD "%d" COLOR_RESET "\n",
-               celdas_libres);
-        printf("  " COLOR_AMARILLO "Monedas disponibles:      " COLOR_BOLD "%d" COLOR_RESET "\n",
-               total_monedas_nivel);
-        printf("\n  Presiona cualquier tecla para iniciar...\n");
-        _getch();
+            limpiar_pantalla();
+            printf(COLOR_AMARILLO COLOR_BOLD "  Preparando nivel: %s...\n" COLOR_RESET, mapa_nombre_nivel(estado.nivel_actual));
+            printf("\n");
+            printf("  " COLOR_CIAN "Celdas libres en el mapa: " COLOR_BOLD "%d" COLOR_RESET "\n",
+                   estado.celdas_libres);
+            printf("  " COLOR_AMARILLO "Monedas disponibles:      " COLOR_BOLD "%d" COLOR_RESET "\n",
+                   estado.monedas_total);
+            printf("\n  Presiona cualquier tecla para iniciar...\n");
+            _getch();
 
-        /* Inicializamos al jugador en su posicion de inicio */
-        Jugador jugador;
-        inicializar_juego(&jugador);
+            /* Ejecutar el motor de logica para el nivel cargado */
+            bucle_principal(&estado);
 
-        /*
-         * bucle_principal es el motor de logica de Leo.
-         * Se encarga de movimiento, colisiones, recoleccion de
-         * objetos y termina cuando el jugador llega a la salida (E)
-         * o presiona Q.
-         */
-        bucle_principal(&jugador);
-
-        /* ---- Nivel terminado: acumulamos estadisticas ---- */
-        niveles_completados++;
-        monedas_acumuladas   += jugador.monedas;
-        total_monedas_global += total_monedas_nivel;
-        pasos_acumulados     += jugador.pasos;
-
-        /* Pantalla de resumen del nivel */
-        mostrar_nivel_completado(niveles_completados,
-                                 jugador.monedas,
-                                 total_monedas_nivel,
-                                 jugador.pasos);
-
-        /*
-         * Calculamos el puntaje con la funcion NASM
-         * (Funcion obligatoria 3: calcular_puntaje).
-         * Formula: (monedas * 100) - (pasos * 2) + (niveles * 500)
-         */
-        long long puntaje = calcular_puntaje((long long)monedas_acumuladas,
-                                             (long long)pasos_acumulados,
-                                             (long long)niveles_completados);
-
-        /* Al completar 3 niveles: victoria y resumen final */
-        if (niveles_completados >= 3) {
-            mostrar_pantalla_victoria();
-            mostrar_resumen_final(monedas_acumuladas,
-                                  total_monedas_global,
-                                  pasos_acumulados,
-                                  niveles_completados,
-                                  (int)puntaje);
-            break;
+            /* Si el jugador decidio salir con Q, bucle_principal terminara y nosotros podemos verificar si no llego a la salida */
+            // La unica forma oficial de pasar de nivel es que la pos del jugador sea la salida, o bien, validar si llego.
+            // En procesar_entrada, cuando pisa 'E', *jugando = false; 
+            // Podriamos checar si de verdad esta en la celda de salida:
+            char c = mapa_obtener_celda(&estado, estado.pos_jugador.fila, estado.pos_jugador.col);
+            if (c == CELDA_SALIDA) {
+                /* Nivel completado con exito */
+                estado.niveles_completados++;
+                
+                /* Pantalla de resumen del nivel */
+                mostrar_nivel_completado(estado.niveles_completados,
+                                         estado.monedas_recogidas,
+                                         estado.monedas_total,
+                                         estado.pasos);
+            } else {
+                /* El jugador se rindio (Q) */
+                jugando_campana = 0;
+            }
         }
 
-        /*
-         * Mientras no lleguen a 3 niveles, volvemos al menu.
-         * (Rodrigo integrara los mapas reales mas adelante)
-         */
+        /* Al completar 3 niveles: victoria y resumen final */
+        if (estado.niveles_completados >= 3) {
+            /* Calculamos el puntaje con la funcion NASM */
+            int puntaje = calcular_puntaje(estado.monedas_recogidas_global,
+                                           estado.monedas_total_global,
+                                           estado.pasos_global,
+                                           estado.niveles_completados);
+
+            mostrar_pantalla_victoria();
+            mostrar_resumen_final(estado.monedas_recogidas_global,
+                                  estado.monedas_total_global,
+                                  estado.pasos_global,
+                                  estado.niveles_completados,
+                                  puntaje);
+        }
     }
 
     return 0;

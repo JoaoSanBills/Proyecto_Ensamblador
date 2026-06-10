@@ -325,7 +325,7 @@ void mapa_cargar_nivel(EstadoJuego *estado, int nivel) {
 
     /* 6) Calculamos celdas libres con la 5ta funcion de NASM
      */
-    estado->celdas_libres = celdas_libres(estado->celdas, MAP_SIZE);
+    estado->celdas_libres = contar_celdas_libres(estado->celdas, MAP_SIZE);
 
     /* Acumular total global de monedas */
     estado->monedas_total_global += estado->monedas_total;

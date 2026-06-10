@@ -2,18 +2,10 @@
 #define JUEGO_H
 
 #include <stdbool.h>
-
-//jugador
-typedef struct {
-    int fila;
-    int columna;
-    int monedas;
-    bool tiene_llave;
-    int pasos;
-} Jugador;
+#include "mapas.h"
 
 //funciones del motor
-void inicializar_juego(Jugador* jugador);
-void bucle_principal(Jugador* jugador);
+void inicializar_juego(EstadoJuego* estado);
+void bucle_principal(EstadoJuego* estado);
 
 #endif
