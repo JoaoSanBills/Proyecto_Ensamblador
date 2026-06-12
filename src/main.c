@@ -58,12 +58,19 @@ int main(void) {
             if (c == CELDA_SALIDA) {
                 /* Nivel completado con exito */
                 estado.niveles_completados++;
-                
+
+                /* Puntaje acumulado hasta este nivel */
+                int puntaje_nivel = calcular_puntaje(estado.monedas_recogidas_global,
+                                                     estado.monedas_total_global,
+                                                     estado.pasos_global,
+                                                     estado.niveles_completados);
+
                 /* Pantalla de resumen del nivel */
                 mostrar_nivel_completado(estado.niveles_completados,
                                          estado.monedas_recogidas,
                                          estado.monedas_total,
-                                         estado.pasos);
+                                         estado.pasos,
+                                         puntaje_nivel);
             } else {
                 /* El jugador se rindio (Q) */
                 jugando_campana = 0;
