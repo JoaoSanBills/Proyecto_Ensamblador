@@ -83,9 +83,11 @@ void mostrar_hud(int nivel, int monedas, int total_monedas,
  *   monedas       - monedas recolectadas en ese nivel
  *   total_monedas - total de monedas del nivel
  *   pasos         - pasos realizados en ese nivel
+ *   puntaje       - puntaje calculado por la funcion NASM
  */
 void mostrar_nivel_completado(int nivel, int monedas,
-                              int total_monedas, int pasos);
+                              int total_monedas, int pasos,
+                              int puntaje);
 
 /*
  * mostrar_resumen_final

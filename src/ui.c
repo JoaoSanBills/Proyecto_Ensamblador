@@ -191,7 +191,8 @@ void mostrar_hud(int nivel, int monedas, int total_monedas,
 /* ---- Pantalla de nivel completado ---- */
 
 void mostrar_nivel_completado(int nivel, int monedas,
-                              int total_monedas, int pasos) {
+                              int total_monedas, int pasos,
+                              int puntaje) {
     limpiar_pantalla();
 
     printf("\n\n");
@@ -202,6 +203,16 @@ void mostrar_nivel_completado(int nivel, int monedas,
     printf("  " COLOR_AMARILLO "Monedas recolectadas: " COLOR_BOLD "%d / %d" COLOR_RESET "\n",
            monedas, total_monedas);
     printf("  " COLOR_BLANCO "Pasos realizados:      " COLOR_BOLD "%d" COLOR_RESET "\n", pasos);
+    printf("\n");
+    separador_simple();
+    printf("\n");
+    printf("  " COLOR_AMARILLO COLOR_BOLD "Puntaje del nivel: ");
+    if (puntaje >= 1000)
+        printf(COLOR_VERDE COLOR_BOLD "%d" COLOR_RESET "\n", puntaje);
+    else if (puntaje >= 500)
+        printf(COLOR_AMARILLO COLOR_BOLD "%d" COLOR_RESET "\n", puntaje);
+    else
+        printf(COLOR_BLANCO COLOR_BOLD "%d" COLOR_RESET "\n", puntaje);
     printf("\n");
     separador_doble();
 
