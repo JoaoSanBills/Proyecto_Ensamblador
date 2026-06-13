@@ -4,7 +4,21 @@
 #include <conio.h>
 #include <windows.h>
 #include "juego.h"
-#include "ui.h"
+
+// Colores ANSI
+#define COLOR_RESET   "\x1b[0m"
+#define COLOR_ROJO    "\x1b[31m"
+#define COLOR_VERDE   "\x1b[32m"
+#define COLOR_AMARILLO "\x1b[33m"
+#define COLOR_AZUL    "\x1b[34m"
+#define COLOR_MAGENTA "\x1b[35m"
+#define COLOR_CIAN    "\x1b[36m"
+#define COLOR_BLANCO  "\x1b[37m"
+#define COLOR_BOLD    "\x1b[1m"
+
+static void limpiar_pantalla(void) {
+    system("cls");
+}
 
 static void imprimir_ventana_mapa(const EstadoJuego *estado) {
     /* Calcular esquina superior izquierda de la ventana (centrada) */
@@ -23,25 +37,35 @@ static void imprimir_ventana_mapa(const EstadoJuego *estado) {
     }
 
     printf("\n");
+    // Imprimir indices de columnas (sistema de coordenadas X)
+    printf("     ");
+    for (int c = 0; c < VIS_COLS; c++) {
+        int map_c = inicio_c + c;
+        printf(COLOR_CIAN "%02d" COLOR_RESET " ", map_c);
+    }
+    printf("\n");
+
     for (int f = 0; f < VIS_ROWS; f++) {
-        printf("    "); /* Margen izquierdo */
+        int map_f = inicio_f + f;
+        // Imprimir indice de fila (sistema de coordenadas Y)
+        printf(COLOR_CIAN "%02d" COLOR_RESET " | ", map_f);
+
         for (int c = 0; c < VIS_COLS; c++) {
-            int map_f = inicio_f + f;
             int map_c = inicio_c + c;
 
             /* Si estamos en la posicion exacta del jugador, imprimir la P */
             if (map_f == estado->pos_jugador.fila && map_c == estado->pos_jugador.col) {
-                printf(COLOR_VERDE COLOR_BOLD "P" COLOR_RESET " ");
+                printf(COLOR_VERDE COLOR_BOLD "P " COLOR_RESET);
             } else {
                 char celda = mapa_obtener_celda(estado, map_f, map_c);
                 switch (celda) {
-                    case CELDA_PARED:  printf(COLOR_BLANCO "#" COLOR_RESET " "); break;
-                    case CELDA_SUELO:  printf("." " "); break;
-                    case CELDA_MONEDA: printf(COLOR_AMARILLO "M" COLOR_RESET " "); break;
-                    case CELDA_LLAVE:  printf(COLOR_CIAN "K" COLOR_RESET " "); break;
-                    case CELDA_PUERTA: printf(COLOR_MAGENTA "D" COLOR_RESET " "); break;
-                    case CELDA_SALIDA: printf(COLOR_ROJO "E" COLOR_RESET " "); break;
-                    case CELDA_SPAWN:  printf("." " "); break; /* P real ya se pinto */
+                    case CELDA_PARED:  printf(COLOR_BLANCO "# " COLOR_RESET); break;
+                    case CELDA_SUELO:  printf(". "); break;
+                    case CELDA_MONEDA: printf(COLOR_AMARILLO "M " COLOR_RESET); break;
+                    case CELDA_LLAVE:  printf(COLOR_CIAN "K " COLOR_RESET); break;
+                    case CELDA_PUERTA: printf(COLOR_MAGENTA "D " COLOR_RESET); break;
+                    case CELDA_SALIDA: printf(COLOR_ROJO "E " COLOR_RESET); break;
+                    case CELDA_SPAWN:  printf(". "); break; /* P real ya se pinto */
                     default:           printf("%c ", celda); break;
                 }
             }
@@ -120,8 +144,6 @@ void procesar_entrada(EstadoJuego* estado, bool* jugando) {
 }
 
 void inicializar_juego(EstadoJuego* estado) {
-    // La inicialización global de estado ya se maneja en main.c
-    // Esta función limpia acumulados si empezamos juego nuevo
     estado->monedas_total_global = 0;
     estado->monedas_recogidas_global = 0;
     estado->pasos_global = 0;
@@ -135,7 +157,6 @@ void bucle_principal(EstadoJuego* estado) {
     int ultimas_monedas = -1;
 
     limpiar_pantalla();
-    mostrar_hud(estado->nivel_actual + 1, estado->monedas_recogidas, estado->monedas_total, estado->tiene_llave, estado->pasos);
     imprimir_ventana_mapa(estado);
 
     while(jugando) {
@@ -143,7 +164,6 @@ void bucle_principal(EstadoJuego* estado) {
         if (estado->pos_jugador.fila != ultima_fila || estado->pos_jugador.col != ultima_columna || estado->monedas_recogidas != ultimas_monedas) {
             
             limpiar_pantalla();
-            mostrar_hud(estado->nivel_actual + 1, estado->monedas_recogidas, estado->monedas_total, estado->tiene_llave, estado->pasos);
             imprimir_ventana_mapa(estado);
 
             ultima_fila = estado->pos_jugador.fila;
