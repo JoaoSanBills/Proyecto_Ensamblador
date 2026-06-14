@@ -33,6 +33,7 @@
 #define CELDA_PUERTA  'D'
 #define CELDA_SALIDA  'E'
 #define CELDA_SPAWN   'P'
+#define CELDA_TRAMPA  'X'
 
 /* --- Resultado de intentar moverse --- */
 typedef enum {
