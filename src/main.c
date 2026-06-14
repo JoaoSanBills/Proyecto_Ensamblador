@@ -50,10 +50,7 @@ int main(void) {
             /* Ejecutar el motor de logica para el nivel cargado */
             bucle_principal(&estado);
 
-            /* Si el jugador decidio salir con Q, bucle_principal terminara y nosotros podemos verificar si no llego a la salida */
-            // La unica forma oficial de pasar de nivel es que la pos del jugador sea la salida, o bien, validar si llego.
-            // En procesar_entrada, cuando pisa 'E', *jugando = false; 
-            // Podriamos checar si de verdad esta en la celda de salida:
+            /* Verificar si llego a la salida o si salio con Q */
             char c = mapa_obtener_celda(&estado, estado.pos_jugador.fila, estado.pos_jugador.col);
             if (c == CELDA_SALIDA) {
                 /* Nivel completado con exito */
