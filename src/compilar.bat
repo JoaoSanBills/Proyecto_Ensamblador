@@ -33,7 +33,7 @@ for %%F in (*.c) do (
 
 ::enlazamos con gcc
 
-gcc %CSRC% %OBJS% -o "%CARPETA%.exe"
+gcc %CSRC% %OBJS% -o "BitQuest.exe"
 if errorlevel 1 (
     echo Error en el enlace final
     exit /b 1
