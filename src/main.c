@@ -19,7 +19,7 @@ int main(void) {
         /* Salir del juego */
         if (opcion == MENU_SALIR) {
             limpiar_pantalla();
-            printf(COLOR_CIAN "  Hasta luego, explorador!\n" COLOR_RESET);
+            printf(COLOR_CIAN "  Hasta luego, nos vemos pronto\n" COLOR_RESET);
             break;
         }
 

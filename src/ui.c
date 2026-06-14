@@ -217,7 +217,7 @@ void mostrar_pantalla_victoria(void) {
     printf(COLOR_AMARILLO COLOR_BOLD);
     printf("  *  *  *  *  *  *  *  *  *  *  *  *  *\n");
     printf("\n");
-    printf("        FELICIDADES, GANASTE!\n");
+    printf("        FELICIDADES, GANASTE\n");
     printf("\n");
     printf("  *  *  *  *  *  *  *  *  *  *  *  *  *\n");
     printf(COLOR_RESET "\n");
