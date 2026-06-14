@@ -41,6 +41,7 @@ static void imprimir_ventana_mapa(const EstadoJuego *estado) {
                     case CELDA_LLAVE:  printf(COLOR_CIAN "K" COLOR_RESET " "); break;
                     case CELDA_PUERTA: printf(COLOR_MAGENTA "D" COLOR_RESET " "); break;
                     case CELDA_SALIDA: printf(COLOR_ROJO "E" COLOR_RESET " "); break;
+                    case CELDA_TRAMPA: printf(COLOR_ROJO "X" COLOR_RESET " "); break;
                     case CELDA_SPAWN:  printf("." " "); break; /* P real ya se pinto */
                     default:           printf("%c ", celda); break;
                 }
@@ -103,6 +104,22 @@ void procesar_entrada(EstadoJuego* estado, bool* jugando) {
             if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_LLAVE)) {
                 estado->tiene_llave = 1;
                 mapa_establecer_celda(estado, nueva_fila, nueva_columna, CELDA_SUELO);
+            }
+
+            // Trampa (Morir y reiniciar campana)
+            if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_TRAMPA)) {
+                limpiar_pantalla();
+                printf("\n\n" COLOR_ROJO "  *** CAISTE EN UNA TRAMPA ('X') ***\n" COLOR_RESET);
+                printf("  El suelo se derrumba bajo tus pies...\n");
+                printf("\n  Presiona cualquier tecla para volver al menu...\n");
+                Sleep(500);
+                while(_kbhit()) _getch(); // limpiar buffer
+                _getch();
+                *jugando = false; 
+                // Actualiza pos para que la celda actual sea X y main.c sepa que perdio
+                estado->pos_jugador.fila = nueva_fila;
+                estado->pos_jugador.col = nueva_columna;
+                return;
             }
 
             // Salida
