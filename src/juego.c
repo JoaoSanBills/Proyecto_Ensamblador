@@ -35,7 +35,7 @@ static void imprimir_ventana_mapa(const EstadoJuego *estado) {
             } else {
                 char celda = mapa_obtener_celda(estado, map_f, map_c);
                 switch (celda) {
-                    case CELDA_PARED:  printf(COLOR_BLANCO "#" COLOR_RESET " "); break;
+                    case CELDA_PARED:  printf(COLOR_BLANCO "\xE2\x96\x88\xE2\x96\x88" COLOR_RESET); break;
                     case CELDA_SUELO:  printf("." " "); break;
                     case CELDA_MONEDA: printf(COLOR_AMARILLO "M" COLOR_RESET " "); break;
                     case CELDA_LLAVE:  printf(COLOR_CIAN "K" COLOR_RESET " "); break;
