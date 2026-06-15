@@ -7,11 +7,11 @@
 #include "ui.h"
 
 static void imprimir_ventana_mapa(const EstadoJuego *estado) {
-    /* Calcular esquina superior izquierda de la ventana (centrada) */
+    // calcular para que la camara siga al jugador (centrarlo wey)
     int inicio_f = estado->pos_jugador.fila - (VIS_ROWS / 2);
     int inicio_c = estado->pos_jugador.col  - (VIS_COLS / 2);
 
-    /* Clamping (Asegurar limites del mapa) */
+    // clamping para que la camara no se vaya a la goma si esta en la orilla
     if (inicio_f < 0) inicio_f = 0;
     if (inicio_c < 0) inicio_c = 0;
     
@@ -24,12 +24,12 @@ static void imprimir_ventana_mapa(const EstadoJuego *estado) {
 
     printf("\n");
     for (int f = 0; f < VIS_ROWS; f++) {
-        printf("    "); /* Margen izquierdo */
+        printf("    "); // margencito izquierdo para que no se pegue
         for (int c = 0; c < VIS_COLS; c++) {
             int map_f = inicio_f + f;
             int map_c = inicio_c + c;
 
-            /* Si estamos en la posicion exacta del jugador, imprimir la P */
+            // si la coordenada cuadra con la del wey lo pintamos de verde
             if (map_f == estado->pos_jugador.fila && map_c == estado->pos_jugador.col) {
                 printf(COLOR_VERDE COLOR_BOLD "P" COLOR_RESET " ");
             } else {
@@ -42,7 +42,7 @@ static void imprimir_ventana_mapa(const EstadoJuego *estado) {
                     case CELDA_PUERTA: printf(COLOR_MAGENTA "D" COLOR_RESET " "); break;
                     case CELDA_SALIDA: printf(COLOR_ROJO "E" COLOR_RESET " "); break;
                     case CELDA_TRAMPA: printf(COLOR_ROJO "X" COLOR_RESET " "); break;
-                    case CELDA_SPAWN:  printf("." " "); break; /* P real ya se pinto */
+                    case CELDA_SPAWN:  printf("." " "); break; // ignorar la P falsa del mapa porque ya pintamos al vato real
                     default:           printf("%c ", celda); break;
                 }
             }
@@ -80,27 +80,27 @@ void procesar_entrada(EstadoJuego* estado, bool* jugando) {
                 return; // Ignorar cualquier otra tecla
         }
 
-        // Llamamos a la funcion de NASM de Joao para validar el movimiento (paredes)
+        // funcion de ensamblador de joao para que no atraviese los bloques
         if (validar_movimiento(estado->celdas, MAP_COLS, nueva_fila, nueva_columna) == 1) {
             
-            // Detectar objetos usando las funciones de NASM de Joao
-            // Puerta: detectar_objeto(..., 'D')
+            // checar si topa con objetos (tambien con funcion en asm)
+            // puerta
             if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_PUERTA)) {
                 if (!estado->tiene_llave) {
-                    return; // Bloqueado
+                    return; // ta bloqueado wey no tiene la llave
                 } else {
                     mapa_establecer_celda(estado, nueva_fila, nueva_columna, CELDA_SUELO);
                 }
             }
 
-            // Moneda
+            // agarro monedita?
             if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_MONEDA)) {
                 estado->monedas_recogidas++;
                 estado->monedas_recogidas_global++;
                 mapa_establecer_celda(estado, nueva_fila, nueva_columna, CELDA_SUELO);
             }
 
-            // Llave
+            // encontro la llave
             if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_LLAVE)) {
                 estado->tiene_llave = 1;
                 mapa_establecer_celda(estado, nueva_fila, nueva_columna, CELDA_SUELO);
@@ -124,10 +124,10 @@ void procesar_entrada(EstadoJuego* estado, bool* jugando) {
 
             // Salida
             if (detectar_objeto(estado->celdas, MAP_COLS, nueva_fila, nueva_columna, CELDA_SALIDA)) {
-                *jugando = false; // Nivel completado
+                *jugando = false; // ya la armo, paso de nivel
             }
 
-            // Actualiza posicion del jugador
+            // finalmente movemos al mono y contamos el paso
             estado->pos_jugador.fila = nueva_fila;
             estado->pos_jugador.col = nueva_columna;
             estado->pasos++;
@@ -137,8 +137,8 @@ void procesar_entrada(EstadoJuego* estado, bool* jugando) {
 }
 
 void inicializar_juego(EstadoJuego* estado) {
-    // La inicialización global de estado ya se maneja en main.c
-    // Esta función limpia acumulados si empezamos juego nuevo
+    // el main ya setea esto pero por si las moscas para reiniciar puntos
+    // al empezar nuevo juego
     estado->monedas_total_global = 0;
     estado->monedas_recogidas_global = 0;
     estado->pasos_global = 0;

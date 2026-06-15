@@ -1,28 +1,15 @@
-/* ============================================================
- *  mapas.c  -  BitQuest | Arquitecto de Niveles
- *
- *  Contenido:
- *    1. Datos raw de los 3 mapas 60x60 (hardcoded).
- *    2. Funciones de carga, gestion y spawn.
- *
- *  Cada mapa se define como un arreglo de 60 strings de 60
- *  caracteres. Al cargar se copian a un buffer lineal de 3600
- *  bytes (celdas[fila * MAP_COLS + col]).
- *
- *  Convencion de caracteres:
- *    '.' camino libre   '#' pared    'M' moneda
- *    'K' llave          'D' puerta   'E' salida   'P' spawn
- * ============================================================ */
+// ============================================================
+//  mapas.c  -  Aca estan los niveles y funciones para cargarlos
+//  Los mapas son matrices de 60x60 chars
+//  que pasamos a un arreglo de 1 dimension para que
+//  nasm no se queje
+//  Caracteres que usamos:
+//    '.' pisable        '#' muro    'M' varo
+//    'K' la llavecita   'D' puerta  'E' la salida   'P' spawn
+// ============================================================
 
 #include <string.h>   /* memcpy */
 #include "mapas.h"
-
-/* ============================================================
- *  DATOS DE LOS MAPAS
- *  - Cada fila es exactamente MAP_COLS (60) caracteres.
- *  - Generados y verificados con gen_mapas.py.
- *  - El script confirmo 60 chars x fila y 60 filas x mapa.
- * ============================================================ */
 
 /* ------------------------------------------------------------------
  * NIVEL 1 - "Las Ruinas"  (Facil)
@@ -240,10 +227,6 @@ static const char nivel3_data[MAP_ROWS][MAP_COLS + 1] = {
     "############################################################"
 };
 
-/* ============================================================
- *  TABLA DE NIVELES
- * ============================================================ */
-
 /* ------------------------------------------------------------------
  * NIVEL 4 - "El Abismo"  (Experto)
  * Laberinto cerrado con multiples trampas mortales 'X'
@@ -324,18 +307,14 @@ static const char *nivel_nombres[NUM_LEVELS] = {
     "La Fortaleza",
     "El Abismo"
 };
+//  FUNCIONES PRIVADAS (nomas se usan aca)
 
-/* ============================================================
- *  FUNCIONES PRIVADAS (helpers internos)
- * ============================================================ */
-
-/* Convierte (fila, col) a indice lineal del buffer */
+// formula chida para sacar la pos en el arreglo lineal
 static int idx(int fila, int col) {
     return fila * MAP_COLS + col;
 }
 
-/* Busca la primera ocurrencia de 'c' en el mapa activo.
- * Retorna {-1, -1} si no la encuentra. */
+// buscar donde chingados esta un caracter en el mapa, si no hay pos -1
 static Coordenada buscar_celda(const EstadoJuego *estado, char c) {
     Coordenada resultado = { -1, -1 };
     for (int f = 0; f < MAP_ROWS; f++) {
@@ -350,9 +329,7 @@ static Coordenada buscar_celda(const EstadoJuego *estado, char c) {
     return resultado;
 }
 
-/* ============================================================
- *  FUNCIONES PUBLICAS
- * ============================================================ */
+// FUNCIONES PUBLICAS
 
 /* mapa_nombre_nivel ------------------------------------------ */
 const char *mapa_nombre_nivel(int nivel) {
@@ -374,36 +351,33 @@ void mapa_cargar_nivel(EstadoJuego *estado, int nivel) {
     estado->tiene_llave       = 0;
     estado->pasos             = 0;
 
-    /* Copiar fila por fila al buffer lineal */
+    // ir copiando las rows al mapa en memoria
     const char (*datos)[MAP_COLS + 1] = nivel_mapas[nivel];
     for (int f = 0; f < MAP_ROWS; f++) {
         memcpy(&estado->celdas[idx(f, 0)], datos[f], MAP_COLS);
     }
 
-    /* Localizar el punto de spawn 'P' */
+    // localizar donde debe de aparecer el mono (la letra P)
     estado->spawn = buscar_celda(estado, CELDA_SPAWN);
 
     /* Posicionar al jugador en el spawn */
     estado->pos_jugador = estado->spawn;
 
-    /* Contar monedas usando la funcion NASM (contar_caracteres) */
+    // cuenta monedas con la de ensamblador pa rapido
     estado->monedas_total = contar_caracteres(
         estado->celdas,   /* RCX: puntero al mapa              */
         MAP_SIZE,         /* EDX: total de bytes a recorrer    */
         CELDA_MONEDA      /* R8B: caracter a contar ('M')      */
     );
 
-    /* 6) Calculamos celdas libres con la 5ta funcion de NASM
-     */
+    // sacar los espacios libres con nasm
     estado->celdas_libres = contar_celdas_libres(estado->celdas, MAP_SIZE);
 
     /* Acumular total global de monedas */
     estado->monedas_total_global += estado->monedas_total;
 }
 
-/* ----------------------------------------------------------
- * mapa_obtener_celda
- * ---------------------------------------------------------- */
+// mapa_obtener_celda
 char mapa_obtener_celda(const EstadoJuego *estado, int fila, int col) {
     if (fila < 0 || fila >= MAP_ROWS || col < 0 || col >= MAP_COLS) {
         return CELDA_PARED;   /* fuera del mapa = pared */
@@ -411,21 +385,15 @@ char mapa_obtener_celda(const EstadoJuego *estado, int fila, int col) {
     return estado->celdas[idx(fila, col)];
 }
 
-/* ----------------------------------------------------------
- * mapa_establecer_celda
- * ---------------------------------------------------------- */
+// mapa_establecer_celda
 void mapa_establecer_celda(EstadoJuego *estado, int fila, int col, char valor) {
     if (fila < 0 || fila >= MAP_ROWS || col < 0 || col >= MAP_COLS) return;
     estado->celdas[idx(fila, col)] = valor;
 }
 
-/* ----------------------------------------------------------
- * mapa_spawnear_jugador
- *   Regresa al jugador a la posicion de spawn del nivel actual.
- *   Llamar cuando el jugador pierde o necesita reubicarse.
- * ---------------------------------------------------------- */
+
+// Regresa al jugador a la posicion de spawn del nivel actual.
 void mapa_spawnear_jugador(EstadoJuego *estado) {
     estado->pos_jugador = estado->spawn;
 }
 
-/* Fin de mapas.c */

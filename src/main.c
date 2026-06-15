@@ -8,28 +8,28 @@
 #include "mapas.h"  /* mapas_cargar_nivel */
 
 int main(void) {
-    /* Activar colores ANSI en la terminal de Windows */
+    // activamos los colores en la consola
     habilitar_colores_consola();
 
-    /* ---- Bucle del menu principal ---- */
+    // loop infinito del menu principal wey
     int opcion;
     while (1) {
         opcion = mostrar_menu_inicio();
 
-        /* Salir del juego */
+        // checar si el usuario le dio a salir
         if (opcion == MENU_SALIR) {
             limpiar_pantalla();
             printf(COLOR_CIAN "  Hasta luego, nos vemos pronto\n" COLOR_RESET);
             break;
         }
 
-        /* Mostrar instrucciones y volver al menu */
+        // mostrar el manual de instrucciones y regresar
         if (opcion == MENU_INSTRUCCIONES) {
             mostrar_instrucciones();
             continue;
         }
 
-        /* ---- Opcion: Jugar ---- */
+        // opcion 1: jugar la campana completa
         EstadoJuego estado;
         inicializar_juego(&estado);
 
@@ -47,32 +47,30 @@ int main(void) {
             printf("\n  Presiona cualquier tecla para iniciar...\n");
             _getch();
 
-            /* Ejecutar el motor de logica para el nivel cargado */
+            // mandamos llamar al loop del juego de joao
             bucle_principal(&estado);
 
-            /* Si el jugador decidio salir con Q, bucle_principal terminara y nosotros podemos verificar si no llego a la salida */
-            // La unica forma oficial de pasar de nivel es que la pos del jugador sea la salida, o bien, validar si llego.
-            // En procesar_entrada, cuando pisa 'E', *jugando = false; 
-            // Podriamos checar si de verdad esta en la celda de salida:
+            // si aprieta Q o pisa trampa el bucle termina, aca checamos si de verdad llego a la salida
+            // para no darle el gane si se murio o se salio
             char c = mapa_obtener_celda(&estado, estado.pos_jugador.fila, estado.pos_jugador.col);
             if (c == CELDA_SALIDA) {
-                /* Nivel completado con exito */
+                // paso el nivel con exito
                 estado.niveles_completados++;
                 
-                /* Pantalla de resumen del nivel */
+                // mostrar la pantallita de stats del nivel
                 mostrar_nivel_completado(estado.niveles_completados,
                                          estado.monedas_recogidas,
                                          estado.monedas_total,
                                          estado.pasos);
             } else {
-                /* El jugador se rindio (Q) */
+                // el wey se rindio o cayo en trampa
                 jugando_campana = 0;
             }
         }
 
-        /* Al completar todos los niveles: victoria y resumen final */
+        // si ya se rifo todos los niveles le mostramos la pantalla final
         if (estado.niveles_completados >= NUM_LEVELS) {
-            /* Calculamos el puntaje con la funcion NASM */
+            // usar la funcion de nasm para calcular los puntos finales
             int puntaje = calcular_puntaje(estado.monedas_recogidas_global,
                                            estado.monedas_total_global,
                                            estado.pasos_global,
