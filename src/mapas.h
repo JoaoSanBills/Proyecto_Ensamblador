@@ -19,7 +19,7 @@
 #define MAP_COLS     60
 #define MAP_ROWS     60
 #define MAP_SIZE     (MAP_COLS * MAP_ROWS)   /* 3600 bytes */
-#define NUM_LEVELS   3
+#define NUM_LEVELS   4
 
 /* --- Dimensiones de la ventana visible --- */
 #define VIS_COLS     20

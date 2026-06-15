@@ -157,7 +157,7 @@ void mostrar_instrucciones(void) {
     printf("  Recorre el laberinto, recoge la " COLOR_CIAN "llave" COLOR_RESET ",\n");
     printf("  abre la " COLOR_MAGENTA "puerta" COLOR_RESET " y llega a la " COLOR_ROJO "salida" COLOR_RESET ".\n");
     printf("  Recolecta todas las " COLOR_AMARILLO "monedas" COLOR_RESET " que puedas.\n");
-    printf("  Completa los 3 niveles para ganar!\n");
+    printf("  Completa todos los niveles para ganar!\n");
     printf("\n");
 
     separador_doble();
@@ -222,7 +222,7 @@ void mostrar_pantalla_victoria(void) {
     printf("  *  *  *  *  *  *  *  *  *  *  *  *  *\n");
     printf(COLOR_RESET "\n");
 
-    printf("  Has completado los " COLOR_VERDE COLOR_BOLD "3 niveles" COLOR_RESET " de BitQuest.\n");
+    printf("  Has completado " COLOR_VERDE COLOR_BOLD "todos los niveles" COLOR_RESET " de BitQuest.\n");
     printf("  Eres un verdadero " COLOR_CIAN "Explorador de Matrices" COLOR_RESET "!\n");
     printf("\n");
 

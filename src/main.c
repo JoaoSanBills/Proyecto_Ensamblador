@@ -34,7 +34,7 @@ int main(void) {
         inicializar_juego(&estado);
 
         int jugando_campana = 1;
-        while (jugando_campana && estado.niveles_completados < 3) {
+        while (jugando_campana && estado.niveles_completados < NUM_LEVELS) {
             mapa_cargar_nivel(&estado, estado.niveles_completados);
 
             limpiar_pantalla();
@@ -70,8 +70,8 @@ int main(void) {
             }
         }
 
-        /* Al completar 3 niveles: victoria y resumen final */
-        if (estado.niveles_completados >= 3) {
+        /* Al completar todos los niveles: victoria y resumen final */
+        if (estado.niveles_completados >= NUM_LEVELS) {
             /* Calculamos el puntaje con la funcion NASM */
             int puntaje = calcular_puntaje(estado.monedas_recogidas_global,
                                            estado.monedas_total_global,
