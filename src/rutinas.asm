@@ -35,7 +35,7 @@ validar_movimiento:
     xor eax, eax
     xor r10d, r10d
 
-    ;Realizamos -> INDICE PLANO = (Nfila x TotColumnas) + Ncolumna
+    ;INDICE PLANO = (Nfila x TotColumnas) + Ncolumna
     ;Esto pq estamos en la memoria RAM, arreglo unidimensional
     imul r8d, edx
     add r8d, r9d

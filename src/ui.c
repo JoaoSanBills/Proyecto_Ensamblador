@@ -1,7 +1,4 @@
-/* =========================================================
- * ui.c - Implementacion de UI/UX para BitQuest
- * Rol 4: Sistema de menus, HUD y pantallas de resultado
- * ========================================================= */
+// ui.c - todo lo de la consola, colores y mensajitos
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,28 +6,28 @@
 #include <windows.h>
 #include "ui.h"
 
-/* ---- Helpers internos ---- */
+// ---- helpers de print ----
 
-/* Imprime una linea decorativa de separacion */
+// linea normalita
 static void separador_simple(void) {
     printf(COLOR_CIAN "=================================" COLOR_RESET "\n");
 }
 
-/* Imprime una linea doble decorativa para pantallas importantes */
+// linea mas gruesa pa pantallas importantes
 static void separador_doble(void) {
     printf(COLOR_AMARILLO "=================================================" COLOR_RESET "\n");
 }
 
-/* Espera que el usuario presione cualquier tecla */
+// hacer que el vato presione una tecla pa seguir
 static void esperar_tecla(void) {
     printf("\n  " COLOR_BLANCO "Presiona cualquier tecla para continuar..." COLOR_RESET "\n");
     _getch();
 }
 
-/* ---- Funciones publicas ---- */
+// ---- Funciones publicas ----
 
 void habilitar_colores_consola(void) {
-    /* Activa el procesamiento de secuencias VT100 en Windows 10+ */
+    // activa los codigos ansi en el cmd de windows o si no salen puros caracteres raros
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD dwMode = 0;
     GetConsoleMode(hOut, &dwMode);
@@ -42,12 +39,10 @@ void limpiar_pantalla(void) {
     system("cls");
 }
 
-/* ---- Menu de inicio ---- */
+// menu principal chido
 
-/*
- * Dibuja el titulo ASCII art del juego en amarillo.
- * Separado en funcion propia para reutilizarlo en varias pantallas.
- */
+// dibuja el nombre del juego chido con ascii
+// lo pongo aparte para usarlo en todos los menus
 static void dibujar_titulo(void) {
     printf(COLOR_AMARILLO COLOR_BOLD);
     printf("  +-+-+-+-+-+-+-+-+\n");
@@ -59,7 +54,7 @@ static void dibujar_titulo(void) {
 }
 
 int mostrar_menu_inicio(void) {
-    int seleccion = 0; /* 0=Jugar, 1=Instrucciones, 2=Salir */
+    int seleccion = 0; // 0=Jugar, 1=Instrucciones, 2=Salir
 
     while (1) {
         limpiar_pantalla();
@@ -67,7 +62,7 @@ int mostrar_menu_inicio(void) {
         separador_simple();
         printf("\n");
 
-        /* Resalta la opcion seleccionada con flecha y color */
+        // marcar la opcion en donde esta el jugador con flechitas
         if (seleccion == 0)
             printf(COLOR_VERDE COLOR_BOLD " >> " COLOR_RESET COLOR_VERDE);
         else
@@ -90,15 +85,15 @@ int mostrar_menu_inicio(void) {
         separador_simple();
         printf("  " COLOR_BLANCO "W/S o flechas para navegar  |  Enter o numero para elegir" COLOR_RESET "\n");
 
-        /* Lectura de tecla (en Windows las flechas envian 2 bytes: 0xE0 + codigo) */
+        // capturar teclado (windows es raro y las flechas mandan 2 bytes de golpe)
         char tecla = _getch();
 
         if (tecla == 0 || (unsigned char)tecla == 224) {
-            /* Segunda parte del codigo de flecha */
+            // leer el segundo byte de la flechita
             char tecla2 = _getch();
-            if (tecla2 == 72)      /* flecha arriba */
+            if (tecla2 == 72)      // flecha arriba
                 seleccion = (seleccion - 1 + 3) % 3;
-            else if (tecla2 == 80) /* flecha abajo */
+            else if (tecla2 == 80) // flecha abajo
                 seleccion = (seleccion + 1) % 3;
 
         } else if (tecla == 'w' || tecla == 'W') {
@@ -117,13 +112,13 @@ int mostrar_menu_inicio(void) {
             return MENU_SALIR;
 
         } else if (tecla == '\r' || tecla == '\n') {
-            /* Enter confirma la seleccion actual */
+            // enter pa confirmar la opcion
             return seleccion + 1;
         }
     }
 }
 
-/* ---- Pantalla de instrucciones ---- */
+// pantallita de como jugar
 
 void mostrar_instrucciones(void) {
     limpiar_pantalla();
@@ -164,31 +159,31 @@ void mostrar_instrucciones(void) {
     esperar_tecla();
 }
 
-/* ---- HUD en tiempo real ---- */
+// pintar el hud en la pantalla
 
 void mostrar_hud(int nivel, int monedas, int total_monedas,
                  int tiene_llave, int pasos) {
     separador_simple();
 
-    /* Nivel */
+    // nivel actual
     printf("  " COLOR_CIAN "Nivel: " COLOR_BOLD "%d" COLOR_RESET, nivel);
 
-    /* Monedas */
+    // cuanta lana trae
     printf("   " COLOR_AMARILLO "Monedas: " COLOR_BOLD "%d/%d" COLOR_RESET, monedas, total_monedas);
 
-    /* Estado de la llave */
+    // ya encontro la llave?
     if (tiene_llave)
         printf("   " COLOR_CIAN "Llave: " COLOR_VERDE COLOR_BOLD "SI" COLOR_RESET);
     else
         printf("   " COLOR_CIAN "Llave: " COLOR_ROJO "No" COLOR_RESET);
 
-    /* Pasos */
+    // cuantos pasos dio
     printf("   " COLOR_BLANCO "Pasos: %d" COLOR_RESET "\n", pasos);
 
     separador_simple();
 }
 
-/* ---- Pantalla de nivel completado ---- */
+// le mostramos esto cuando pasa el nivel
 
 void mostrar_nivel_completado(int nivel, int monedas,
                               int total_monedas, int pasos) {
@@ -208,7 +203,7 @@ void mostrar_nivel_completado(int nivel, int monedas,
     esperar_tecla();
 }
 
-/* ---- Pantalla de victoria ---- */
+// pantalla epica de victoria
 
 void mostrar_pantalla_victoria(void) {
     limpiar_pantalla();
@@ -229,7 +224,7 @@ void mostrar_pantalla_victoria(void) {
     esperar_tecla();
 }
 
-/* ---- Resumen final del juego ---- */
+// el resumen perron del final
 
 void mostrar_resumen_final(int monedas_total, int total_monedas_global,
                            int pasos_total, int niveles_completados,
@@ -255,7 +250,7 @@ void mostrar_resumen_final(int monedas_total, int total_monedas_global,
     separador_simple();
     printf("\n");
 
-    /* Puntaje con color segun el valor */
+    // pintar el puntaje dependiendo de que tan cabron lo hizo
     printf("  " COLOR_AMARILLO COLOR_BOLD "Puntaje final: ");
     if (puntaje >= 3000)
         printf(COLOR_VERDE COLOR_BOLD "%d" COLOR_RESET "\n", puntaje);
