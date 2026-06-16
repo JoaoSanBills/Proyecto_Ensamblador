@@ -60,22 +60,23 @@ calcular_puntaje:
     ;EDX = Monedas totales
     ;R8D = Pasos realizados
     ;R9D = Niveles completados (32 bits = D)
-    ;Puntaje (EAX) = (recolectadas*100/totales) + (niveles*300) - (pasos*5)
+    ;Puntaje (EAX) = (recolectadas*1000/totales) + (niveles*2000) - (pasos)
     xor eax, eax
     xor r10d, r10d
 
     mov r10d, edx
     mov eax, ecx
-    imul eax, 100
+    imul eax, 1000
 
     cdq          ;va a tomar lo de eax y extender su signo edx, extender el signo solamente es dejar la parte de edx con 1(-) o 0(+)
     mov ecx, r10d
     idiv ecx    ;resultado en eax, residuo en edx
     
-    imul r9d, 300
+    imul r9d, 2000
     add eax, r9d
 
-    imul r8d, 5
+    ;La penalizacion de pasos original era de x5, lo que daba numeros negativos muy rapido.
+    ;Ahora restamos 1 punto por cada paso.
     sub eax, r8d
 
     cmp eax, 0
